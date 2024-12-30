@@ -23,7 +23,26 @@ const getWalletBalance = async() => {
     }
 }
 
+const airDropSol = async() => {
+    try{
+        const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+        const airdropSignature = await connection.requestAirdrop(publicKey, 2 * LAMPORTS_PER_SOL);
+        const latestBlockHash = await connection.getLatestBlockhash()
+        await connection.confirmTransaction({
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: airdropSignature,
+        });
+
+    } catch(err){
+        console.log(err);
+    }
+}
+
 const main = async() => {
     await getWalletBalance();
+    await airDropSol();
+    await getWalletBalance();
 }
+
 main();
